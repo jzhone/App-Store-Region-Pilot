@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "App Store Region Pilot",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Keep Apple App Store links in the right region. Auto-redirect to CN or pass-through for foreign stores.",
   "permissions": [
     "storage",
@@ -11,6 +11,13 @@
   ],
   "host_permissions": [
     "https://apps.apple.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://apps.apple.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
   ],
   "background": {
     "service_worker": "background.js"

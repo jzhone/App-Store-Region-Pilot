@@ -12,9 +12,10 @@
 |---|---|---|
 | 🔄 | **Redirect to CN** — Automatically rewrites any foreign-region App Store URL to the China region | **跳转 CN** — 自动将外区 App Store 链接改写为中国区链接 |
 | 🔓 | **Pass-through** — Disables all rewrites; use with a proxy/VPN to browse foreign stores directly | **不跳转** — 关闭所有重写规则，配合代理/VPN 可正常浏览外区商店 |
+| 📱 | **QR Code on page** — Shows a scannable QR code on every App Store page for instant mobile access | **页面二维码** — 在 App Store 页面显示二维码，手机扫码直接打开 |
 
-- Zero latency — rewrites happen **before** the request is sent, no page flash  
-- No tracking, no remote calls, no analytics  
+- Zero latency — rewrites happen **before** the request is sent, no page flash
+- No tracking, no remote calls, no analytics
 - Supports all major App Store path types: `app`, `story`, `genre`, `search`, `developer`, `music`, `podcast`, `book`, `movie`, `tv-show`, `artist`, etc.
 
 ---
@@ -72,6 +73,7 @@ The extension uses Chrome's **`declarativeNetRequest`** API (Manifest V3) to int
 | `storage` | Saves your mode preference across browser sessions / 保存模式设置 |
 | `declarativeNetRequest` | Rewrites App Store URLs / 改写请求 URL |
 | `declarativeNetRequestWithHostAccess` | Required to apply rules to `apps.apple.com` / 对指定域名应用规则 |
+| `content_scripts` | Injects QR code panel on App Store pages / 在页面注入二维码面板 |
 | `host_permissions: apps.apple.com` | Scope limited to App Store only / 仅限 App Store 域名 |
 
 No data is collected or transmitted. The extension works entirely offline.  
@@ -82,9 +84,9 @@ No data is collected or transmitted. The extension works entirely offline.
 ## 🗂 File Structure / 文件结构
 
 ```
-apple-region-switcher/
 ├── manifest.json       # Extension manifest (MV3)
 ├── background.js       # Service worker — rule engine & state
+├── content.js          # Content script — QR code injection on App Store pages
 ├── popup.html          # Popup UI
 ├── popup.css           # Popup styles (light theme)
 ├── popup.js            # Popup interaction logic
@@ -98,6 +100,7 @@ apple-region-switcher/
 
 ## 🔮 Roadmap / 后续计划
 
+- [x] ~~QR Code on App Store pages~~
 - [ ] Support switching to regions other than CN (US, HK, JP…)
 - [ ] Auto mode — detect IP and choose mode automatically
 - [ ] Chrome Web Store release

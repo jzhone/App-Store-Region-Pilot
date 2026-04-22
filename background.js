@@ -10,6 +10,7 @@ const SUPPORTED_REGIONS = ["cn", "us", "hk", "jp", "tw", "gb", "au", "de", "fr",
 let state = {
   mode: "redirect",      // "redirect" | "passthrough"
   effectiveMode: "redirect",
+  showQRCode: true,      // 是否显示页面二维码
   status: "active"
 };
 
@@ -25,9 +26,10 @@ chrome.runtime.onStartup.addListener(async () => {
 });
 
 async function init() {
-  const stored = await chrome.storage.local.get(["mode"]);
+  const stored = await chrome.storage.local.get(["mode", "showQRCode"]);
   state.mode = stored.mode || "redirect";
   state.effectiveMode = state.mode;
+  state.showQRCode = stored.showQRCode !== false; // 默认 true
 
   if (state.mode === "redirect") {
     await applyRedirectRules("cn");
@@ -121,6 +123,21 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   return true;
 });
 
+async function notifyContentScripts(message) {
+  try {
+    const tabs = await chrome.tabs.query({ url: "https://apps.apple.com/*" });
+    for (const tab of tabs) {
+      try {
+        await chrome.tabs.sendMessage(tab.id, message);
+      } catch (e) {
+        // 忽略未加载 content script 的标签页
+      }
+    }
+  } catch (e) {
+    console.error("[RegionPilot] Failed to notify content scripts:", e);
+  }
+}
+
 async function handleMessage(msg) {
   switch (msg.type) {
     case "GET_STATE":
@@ -136,6 +153,13 @@ async function handleMessage(msg) {
       } else {
         await clearRules();
       }
+      return { ...state };
+
+    case "SET_QR_CODE":
+      state.showQRCode = msg.enabled;
+      await chrome.storage.local.set({ showQRCode: msg.enabled });
+      // 通知所有 content scripts 更新
+      await notifyContentScripts({ type: "QR_CODE_CHANGED", enabled: msg.enabled });
       return { ...state };
 
     default:

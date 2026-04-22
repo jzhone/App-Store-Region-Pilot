@@ -1,5 +1,5 @@
 // ============================================================
-// App Store Region Pilot - popup.js v3
+// App Store Region Pilot - popup.js v4
 // ============================================================
 
 const modeBtns = document.querySelectorAll(".mode-btn");
@@ -7,6 +7,7 @@ const statusDot = document.getElementById("statusDot");
 const statusText = document.getElementById("statusText");
 const activeRegion = document.getElementById("activeRegion");
 const passthroughHint = document.getElementById("passthroughHint");
+const qrToggle = document.getElementById("qrToggle");
 
 // ---- 渲染状态 ----
 function renderState(state) {
@@ -30,6 +31,11 @@ function renderState(state) {
     passthroughHint.style.display = "none";
     activeRegion.textContent = "跳转到中国区";
   }
+
+  // 二维码开关
+  if (qrToggle) {
+    qrToggle.checked = state.showQRCode !== false;
+  }
 }
 
 // ---- 获取初始状态 ----
@@ -49,3 +55,14 @@ modeBtns.forEach(btn => {
     );
   });
 });
+
+// ---- 二维码开关 ----
+if (qrToggle) {
+  qrToggle.addEventListener("change", () => {
+    const enabled = qrToggle.checked;
+    chrome.runtime.sendMessage(
+      { type: "SET_QR_CODE", enabled },
+      (state) => renderState(state)
+    );
+  });
+}

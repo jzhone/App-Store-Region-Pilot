@@ -173,6 +173,88 @@ body {
   color: #b8860b;
 }
 
+/* ---- Toggle Row ---- */
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background: #f5f5f7;
+  border-radius: 10px;
+  margin-bottom: 14px;
+}
+
+.toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.toggle-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.toggle-name {
+  font-weight: 600;
+  font-size: 13px;
+  color: #1a1a1a;
+}
+
+.toggle-desc {
+  font-size: 10px;
+  color: #999;
+  margin-top: 1px;
+}
+
+/* ---- Switch ---- */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #d1d1d6;
+  border-radius: 24px;
+  transition: 0.25s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  border-radius: 50%;
+  transition: 0.25s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+}
+
+.switch input:checked + .slider {
+  background-color: #34c759;
+}
+
+.switch input:checked + .slider:before {
+  transform: translateX(16px);
+}
+
 /* ---- Active Info ---- */
 .active-info {
   text-align: center;
