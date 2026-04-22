@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Region Pilot</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <div class="logo">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" stroke="currentColor" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <div class="title">Region Pilot</div>
+      <div class="version">v1.0</div>
+    </div>
+
+    <!-- Status Indicator -->
+    <div class="status-bar">
+      <div class="status-dot" id="statusDot"></div>
+      <div class="status-text" id="statusText">加载中...</div>
+    </div>
+
+    <!-- Mode Toggle -->
+    <div class="section-label">工作模式</div>
+    <div class="mode-group">
+      <button class="mode-btn active" id="modeRedirect" data-mode="redirect">
+        <span class="mode-icon">🔄</span>
+        <div class="mode-label">
+          <span class="mode-name">跳转 CN</span>
+          <span class="mode-desc">外区链接自动跳转中国区</span>
+        </div>
+      </button>
+      <button class="mode-btn" id="modePassthrough" data-mode="passthrough">
+        <span class="mode-icon">🔓</span>
+        <div class="mode-label">
+          <span class="mode-name">不跳转</span>
+          <span class="mode-desc">保持原样，配合代理使用</span>
+        </div>
+      </button>
+    </div>
+
+    <!-- Hint for passthrough mode -->
+    <div class="hint-box" id="passthroughHint" style="display:none">
+      💡 <strong>不跳转模式</strong>下，外区链接会保持原样。
+      如果在中国大陆，Apple 会自动跳到 CN 首页。
+      <br/>配合 <strong>代理 / VPN</strong> 使用即可正常浏览外区 App Store。
+    </div>
+
+    <!-- Current Active Info -->
+    <div class="active-info" id="activeInfo">
+      当前：<strong id="activeRegion">跳转到中国区</strong>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

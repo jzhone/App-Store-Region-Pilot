@@ -1,0 +1,27 @@
+{
+  "manifest_version": 3,
+  "name": "App Store Region Pilot",
+  "version": "1.0.0",
+  "description": "Keep Apple App Store links in the right region. Auto-redirect to CN or pass-through for foreign stores.",
+  "permissions": [
+    "storage",
+    "declarativeNetRequest",
+    "declarativeNetRequestWithHostAccess",
+    "declarativeNetRequestFeedback"
+  ],
+  "host_permissions": [
+    "https://apps.apple.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Region Pilot"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}
