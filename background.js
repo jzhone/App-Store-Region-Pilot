@@ -5,8 +5,6 @@
 //   - "redirect": 外区链接自动跳转到中国区（默认）
 //   - "passthrough": 不做任何URL改写，原样访问（配合代理使用）
 
-const SUPPORTED_REGIONS = ["cn", "us", "hk", "jp", "tw", "gb", "au", "de", "fr", "kr", "sg"];
-
 let state = {
   mode: "redirect",      // "redirect" | "passthrough"
   effectiveMode: "redirect",
@@ -60,12 +58,10 @@ async function applyRedirectRules(region) {
   const existingRules = await chrome.declarativeNetRequest.getDynamicRules();
   const existingIds = existingRules.map(r => r.id);
 
-  const otherRegions = SUPPORTED_REGIONS.filter(r => r !== region);
-  const otherRegionsPattern = otherRegions.join("|");
-
   const newRules = [];
 
-  // 规则1: 已有其他区域前缀 → 替换为中国区
+  // 规则1: 已有任意非目标区域前缀（两字母代码）→ 替换为目标区域
+  // 匹配如 /in/ /us/ /jp/ /gb/ 等所有两字母地区代码，除了目标 region
   newRules.push({
     id: 1,
     priority: 10,
@@ -76,12 +72,12 @@ async function applyRedirectRules(region) {
       }
     },
     condition: {
-      regexFilter: `^https://apps\\.apple\\.com/(?:${otherRegionsPattern})/(.*)`,
+      regexFilter: `^https://apps\\.apple\\.com/(?!${region}/)[a-z]{2}/(.*)`,
       resourceTypes: ["main_frame"]
     }
   });
 
-  // 规则2~N: 无区域前缀 → 插入中国区
+  // 规则2~N: 无区域前缀 → 插入目标区域
   const pathPrefixes = [
     "app", "story", "genre", "search", "developer",
     "music", "podcast", "book", "movie", "tv-show",
