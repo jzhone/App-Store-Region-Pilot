@@ -61,8 +61,8 @@
       transition: opacity 0.2s, transform 0.2s;
     `;
 
-    // 二维码图片（使用 Google Chart API，可靠且免费）
-    const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&margin=10&data=' + encodeURIComponent(url);
+    // 二维码图片（优先使用草料二维码 API，国内访问更快）
+    const qrUrl = 'https://api.2dcode.biz/v1/create-qr-code?data=' + encodeURIComponent(url);
     const img = document.createElement('img');
     img.src = qrUrl;
     img.alt = 'QR Code';
@@ -70,8 +70,8 @@
     img.height = 128;
     img.style.cssText = 'display:block;border-radius:8px;';
     img.onerror = () => {
-      // fallback: 使用 Google Chart API
-      img.src = 'https://chart.googleapis.com/chart?cht=qr&chs=150x150&chl=' + encodeURIComponent(url);
+      // fallback: 使用 qrserver API
+      img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&margin=10&data=' + encodeURIComponent(url);
     };
 
     // 标签
