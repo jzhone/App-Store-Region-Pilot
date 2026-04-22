@@ -34,8 +34,22 @@
     const url = window.location.href;
     const panel = createPanel(url);
 
-    // 尝试插入到 App Store 页面右侧区域
-    insertIntoPage(panel);
+    // 尝试定位到 shelf-wrapper 区域，在其内部右侧悬浮
+    const shelfWrapper = document.querySelector('section[data-test-id="shelf-wrapper"]');
+    if (shelfWrapper) {
+      // 确保 shelf-wrapper 是 relative 定位，以便内部 absolute 定位
+      const computed = getComputedStyle(shelfWrapper);
+      if (computed.position === 'static') {
+        shelfWrapper.style.position = 'relative';
+      }
+      shelfWrapper.appendChild(panel);
+    } else {
+      // fallback: 右下角固定定位
+      panel.style.position = 'fixed';
+      panel.style.bottom = '24px';
+      panel.style.right = '24px';
+      document.body.appendChild(panel);
+    }
   }
 
   function removeQRCode() {
@@ -47,6 +61,9 @@
     const panel = document.createElement('div');
     panel.id = PANEL_ID;
     panel.style.cssText = `
+      position: absolute;
+      top: 20px;
+      right: 20px;
       z-index: 2147483647;
       background: #fff;
       border: 1px solid rgba(0,0,0,0.08);
@@ -58,8 +75,8 @@
       align-items: center;
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
       transition: opacity 0.2s, transform 0.2s;
-      position: relative;
       width: fit-content;
+      pointer-events: auto;
     `;
 
     // 二维码图片（优先使用草料二维码 API，国内访问更快）
@@ -115,55 +132,5 @@
     panel.appendChild(label);
 
     return panel;
-  }
-
-  function insertIntoPage(panel) {
-    // 策略1: 插入到 shelf-wrapper 区域的右侧
-    const shelfWrapper = document.querySelector('section[data-test-id="shelf-wrapper"]');
-    if (shelfWrapper) {
-      // 检查 shelf-wrapper 内部是否有 container
-      const container = shelfWrapper.querySelector('.container');
-      if (container) {
-        // 在 container 右侧插入，使用 flex 布局
-        const parent = shelfWrapper;
-        const existingStyle = parent.style.cssText;
-
-        // 确保 parent 是 flex 布局
-        if (getComputedStyle(parent).display !== 'flex') {
-          parent.style.display = 'flex';
-          parent.style.alignItems = 'flex-start';
-          parent.style.gap = '20px';
-        }
-
-        // 给二维码包一个 wrapper，让它在右侧
-        const wrapper = document.createElement('div');
-        wrapper.style.cssText = 'flex-shrink:0;align-self:flex-start;margin-top:20px;';
-        wrapper.appendChild(panel);
-
-        parent.appendChild(wrapper);
-        return;
-      }
-    }
-
-    // 策略2: 插入到页面主内容区右侧
-    const mainContent = document.querySelector('main') ||
-                        document.querySelector('[role="main"]') ||
-                        document.querySelector('.page-content');
-    if (mainContent) {
-      const parent = mainContent.parentElement;
-      if (parent && getComputedStyle(parent).display === 'flex') {
-        const wrapper = document.createElement('div');
-        wrapper.style.cssText = 'flex-shrink:0;margin-left:20px;';
-        wrapper.appendChild(panel);
-        parent.appendChild(wrapper);
-        return;
-      }
-    }
-
-    // 策略3: 固定定位 fallback（右下角）
-    panel.style.position = 'fixed';
-    panel.style.bottom = '24px';
-    panel.style.right = '24px';
-    document.body.appendChild(panel);
   }
 })();
