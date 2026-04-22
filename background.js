@@ -60,24 +60,35 @@ async function applyRedirectRules(region) {
 
   const newRules = [];
 
-  // 规则1: 已有任意非目标区域前缀（两字母代码）→ 替换为目标区域
-  // 匹配如 /in/ /us/ /jp/ /gb/ 等所有两字母地区代码，除了目标 region
+  // 规则1: 目标区域链接 → 允许通过（不操作，优先级最高防止被规则2匹配）
   newRules.push({
     id: 1,
-    priority: 10,
-    action: {
-      type: "redirect",
-      redirect: {
-        regexSubstitution: `https://apps.apple.com/${region}/\\1`
-      }
-    },
+    priority: 20,
+    action: { type: "allow" },
     condition: {
-      regexFilter: `^https://apps\\.apple\\.com/(?!${region}/)[a-z]{2}/(.*)`,
+      regexFilter: `^https://apps\\.apple\\.com/${region}/.*`,
       resourceTypes: ["main_frame"]
     }
   });
 
-  // 规则2~N: 无区域前缀 → 插入目标区域
+  // 规则2: 已有任意区域前缀（两字母代码）→ 替换为目标区域
+  // 匹配如 /in/ /us/ /jp/ /gb/ 等所有两字母地区代码
+  newRules.push({
+    id: 2,
+    priority: 10,
+    action: {
+      type: "redirect",
+      redirect: {
+        regexSubstitution: `https://apps.apple.com/${region}/\\2`
+      }
+    },
+    condition: {
+      regexFilter: `^https://apps\\.apple\\.com/([a-z]{2})/(.*)`,
+      resourceTypes: ["main_frame"]
+    }
+  });
+
+  // 规则3~N: 无区域前缀 → 插入目标区域
   const pathPrefixes = [
     "app", "story", "genre", "search", "developer",
     "music", "podcast", "book", "movie", "tv-show",
